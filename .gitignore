@@ -1,0 +1,13 @@
+*
+!src
+!src/*
+!src/*/*
+!src/*/*/*
+!README.md
+!LICENSE
+!package.yaml
+!stack.yaml
+!app
+!app/*hs
+!.gitignore
+*hs~
