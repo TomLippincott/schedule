@@ -1,6 +1,9 @@
 module Control.Schedule ( TimeSpan(..)
                         , Event(..)
                         , State(..)
+                        , simpleState
+                        , requestedMeetings
+                        , simplePreference
                         , faculty
                         , prospects
                         , slots
@@ -21,20 +24,33 @@ module Control.Schedule ( TimeSpan(..)
                         , firstName
                         , lastName
                         , email
-                        , school
-                        , office
+                        --, school
+                        --, office
                         , availability
                         , preferences
-                        , gender
-                        , urm
-                        , application
-                        , local
-                        , contact
-                        , ref
-                        , biography
+                        --, gender
+                        --, urm
+                        --, application
+                        --, local
+                        --, contact
+                        --, ref
+                        , zoom
+                        --, biography
                         , printSchedules
                         , compressSlots
                         , generateEmails
+                        , Preference(..)
+                        , minutes
+                        , priority
+                        , intervieweeParticipants
+                        , interviewerParticipants
+                        , maxMeetings
+                        , minMeetings
+                        , requestedOnly
+                        , maxMeetingSize
+                        , required
+                        , application
+                        , group
                         ) where
 
 import Control.Schedule.Person
@@ -45,3 +61,4 @@ import Control.Schedule.State
 import Control.Schedule.Solve
 import Control.Schedule.Sheets
 import Control.Schedule.Mail
+import Control.Schedule.Preference

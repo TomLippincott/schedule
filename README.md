@@ -1,5 +1,7 @@
 # scheduler - interview management utility for CLSP recruitment weekend
 
+Prospects can contact faculty etc
+
 This code base produces a command-line utility for managing the interview
 schedules of the CLSP recruitment weekend.  This involves manipulating
 Google spreadsheets, and solving constraint-satisfaction problems based

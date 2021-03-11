@@ -7,12 +7,13 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Control.Schedule.State (State(..), individualMeetings, groupMeetings, faculty, prospects, slots, granularity, compressSlots) where
+module Control.Schedule.State (State(..), individualMeetings, groupMeetings, faculty, prospects, slots, granularity, compressSlots, simpleState, requestedMeetings) where
 
 import Text.Printf (printf, PrintfArg(..), fmtPrecision, fmtChar, errorBadFormat, formatString, vFmt, IsChar)
 import Control.Lens ((^.), (.~), (&), (<&>), set, view, makeLenses, makeFields, (%~))
 import Control.Schedule.Person (Person(..), availability)
 import Control.Schedule.TimeSpan (TimeSpan(..))
+import Control.Schedule.Preference (Preference(..))
 import Data.Text (Text)
 import Data.Map (Map)
 import qualified Data.Map as Map
@@ -21,13 +22,23 @@ import qualified Data.Set as Set
 import Data.List (intercalate)
 import Data.Maybe (fromMaybe, fromJust)
 import System.Random
+import qualified Control.Monad.State as S
 
 data State = State { _faculty :: [Person]
                    , _prospects :: [Person]
+                   , _requestedMeetings :: Maybe [Preference]
                    , _slots :: Maybe [TimeSpan]
                    , _individualMeetings :: Maybe (Map (Text, Text) (Map (Text, Text) [TimeSpan])) -- faculty to student
                    , _groupMeetings :: Maybe (Map (Text, Text) (Map [(Text, Text)] [TimeSpan]))
                    , _granularity :: Maybe Int
+                   , _interviewerSheet :: Text
+                   , _prospectSheet :: Text
+                   , _interviewerAvailabilitySheet :: Text
+                   , _prospectAvailabilitySheet :: Text
+                   , _individualPreferenceSheet :: Text
+                   , _groupPreferenceSheet :: Text
+                   , _interviewerScheduleSheet :: Text
+                   , _prospectScheduleSheet :: Text
                    } deriving (Show)
 
 instance PrintfArg State where
@@ -38,6 +49,8 @@ instance PrintfArg State where
       slots = printf "    %d" ((length . fromMaybe []) _slots :: Int) :: String
 
 makeLenses ''State
+
+simpleState = State [] [] Nothing Nothing Nothing Nothing Nothing "Interviewers" "Prospects" "Interviewer Availability" "Prospect Availability" "Individual Preferences" "Group Preferences" "Interviewer Schedule" "Prospect Schedule"
 
 filtAvail :: (Ord a) => Set a -> Maybe [a] -> Maybe [a]
 filtAvail keep others = Just $ Set.toList toKeep

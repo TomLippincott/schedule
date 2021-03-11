@@ -36,6 +36,7 @@ dependencies:
   - bimap >=0.3.3
   - mime-mail >=0.5.0
   - bytestring >=0.10.10.1
+  - mtl ==2.2.2
   
 ghc-options: -O0
 
