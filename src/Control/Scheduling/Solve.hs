@@ -7,18 +7,18 @@
 {-# LANGUAGE TupleSections #-}
 {-# LANGUAGE ExplicitNamespaces #-}
 
-module Control.Schedule.Solve (solveSchedule, printSchedules) where
+module Control.Scheduling.Solve (solveSchedule, printSchedules) where
 
 import Data.SBV
 import Data.SBV.Trans.Control
-import Control.Schedule.State (State(..), individualMeetings, groupMeetings, faculty, prospects, requestedMeetings)
-import Control.Schedule.Preference
-import Control.Schedule.Person
+import Control.Scheduling.State (State(..), individualMeetings, groupMeetings, faculty, prospects, requestedMeetings)
+import Control.Scheduling.Preference
+import Control.Scheduling.Person
 import Data.Maybe (Maybe, fromJust, catMaybes, fromMaybe)
 import qualified Data.Map as Map
 import Data.Map (Map)
-import Control.Schedule.Person (Person(..), availability, firstName, lastName, fullName, preferences)
-import Control.Schedule.TimeSpan (TimeSpan(..), stringsToSlots, start, end)
+import Control.Scheduling.Person (Person(..), availability, firstName, lastName, fullName, preferences)
+import Control.Scheduling.TimeSpan (TimeSpan(..), stringsToSlots, start, end)
 import Text.Printf (printf)
 import Data.Bimap (Bimap)
 import qualified Data.Set as Set

@@ -1,0 +1,6 @@
+packages: .
+source-repository-package
+        type: git
+        location: https://github.com/brendanhay/gogol.git
+        tag: 801f00b6e63c22522eb2b3e3e2fc77694730a70f
+        subdir: core gogol gogol-sheets

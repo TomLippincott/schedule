@@ -7,13 +7,13 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Control.Schedule.State (State(..), individualMeetings, groupMeetings, faculty, prospects, slots, granularity, compressSlots, simpleState, requestedMeetings) where
+module Control.Scheduling.State (State(..), individualMeetings, groupMeetings, faculty, prospects, slots, granularity, compressSlots, simpleState, requestedMeetings) where
 
 import Text.Printf (printf, PrintfArg(..), fmtPrecision, fmtChar, errorBadFormat, formatString, vFmt, IsChar)
 import Control.Lens ((^.), (.~), (&), (<&>), set, view, makeLenses, makeFields, (%~))
-import Control.Schedule.Person (Person(..), availability)
-import Control.Schedule.TimeSpan (TimeSpan(..))
-import Control.Schedule.Preference (Preference(..))
+import Control.Scheduling.Person (Person(..), availability)
+import Control.Scheduling.TimeSpan (TimeSpan(..))
+import Control.Scheduling.Preference (Preference(..))
 import Data.Text (Text)
 import Data.Map (Map)
 import qualified Data.Map as Map

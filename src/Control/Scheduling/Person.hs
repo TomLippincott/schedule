@@ -7,7 +7,7 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Control.Schedule.Person ( Person(..)
+module Control.Scheduling.Person ( Person(..)
                                , Gender(..)
                                , simplePerson
                                , firstName
@@ -36,7 +36,7 @@ module Control.Schedule.Person ( Person(..)
 
 import Text.Printf (printf, PrintfArg(..), fmtPrecision, fmtChar, errorBadFormat, formatString, vFmt, IsChar)
 import Control.Lens ((^.), (.~), (<&>), set, view, makeLenses, makeFields)
-import Control.Schedule.TimeSpan (TimeSpan(..))
+import Control.Scheduling.TimeSpan (TimeSpan(..))
 import Data.Text (Text)
 import Data.Map (Map)
 import qualified Data.Map as Map

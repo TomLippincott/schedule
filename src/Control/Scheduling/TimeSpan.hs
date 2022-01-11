@@ -7,7 +7,7 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Control.Schedule.TimeSpan (expand, TimeSpan(..), start, end, stringsToSlots, timesFromStrings) where
+module Control.Scheduling.TimeSpan (expand, TimeSpan(..), start, end, stringsToSlots, timesFromStrings) where
 
 import Data.Time
 import Control.Lens ((^.), (.~), (<&>), set, view, makeLenses, makeFields)

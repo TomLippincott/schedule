@@ -1,4 +1,4 @@
-module Control.Schedule ( TimeSpan(..)
+module Control.Scheduling ( TimeSpan(..)
                         , Event(..)
                         , State(..)
                         , simpleState
@@ -53,12 +53,12 @@ module Control.Schedule ( TimeSpan(..)
                         , group
                         ) where
 
-import Control.Schedule.Person
-import Control.Schedule.TimeSpan
-import Control.Schedule.Location
-import Control.Schedule.Event
-import Control.Schedule.State
-import Control.Schedule.Solve
-import Control.Schedule.Sheets
-import Control.Schedule.Mail
-import Control.Schedule.Preference
+import Control.Scheduling.Person
+import Control.Scheduling.TimeSpan
+import Control.Scheduling.Location
+import Control.Scheduling.Event
+import Control.Scheduling.State
+import Control.Scheduling.Solve
+import Control.Scheduling.Sheets
+import Control.Scheduling.Mail
+import Control.Scheduling.Preference

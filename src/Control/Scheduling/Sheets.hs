@@ -6,7 +6,7 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE RankNTypes #-}
 
-module Control.Schedule.Sheets (readSpreadsheet, readState, writeForms, writeSchedule, sheetLookup) where
+module Control.Scheduling.Sheets (readSpreadsheet, readState, writeForms, writeSchedule, sheetLookup) where
 
 import Prelude hiding (group)
 import qualified Network.Google.Sheets as S
@@ -29,10 +29,10 @@ import Data.Set (Set)
 import qualified Data.Set as Set
 import System.Random
 import Data.Int (Int32)
-import Control.Schedule.State
-import Control.Schedule.Person
-import Control.Schedule.TimeSpan
-import Control.Schedule.Preference
+import Control.Scheduling.State
+import Control.Scheduling.Person
+import Control.Scheduling.TimeSpan
+import Control.Scheduling.Preference
 import Data.Time
 import Text.Read (readMaybe)
 import Data.List (intercalate, sort)
@@ -43,8 +43,8 @@ import qualified Data.Text as Text
 readState :: Maybe [TimeSpan] -> Spreadsheet -> State
 readState allSlots ssheet = simpleState & faculty .~ faculty' & prospects .~ prospects' & slots .~ allSlots & individualMeetings .~ indiv & requestedMeetings .~ requestedMeetings'
   where
-    prospects' = (getAvailability "Prospect Availability" ssheet . getPeople "Prospects") ssheet
-    faculty' = (getAvailability "Interviewer Availability" ssheet . getPeople "Interviewers") ssheet
+    prospects' = (getPeople "Prospects") ssheet --(getAvailability "Prospect Availability" ssheet . getPeople "Prospects") ssheet
+    faculty' = (getPeople "Interviewers") ssheet --(getAvailability "Interviewer Availability" ssheet . getPeople "Interviewers") ssheet
     requestedMeetings' = Just $ (getIndividualPrefs "Individual Preferences" ssheet) ++ (getGroupPrefs "Group Preferences" ssheet)
     slu = ssheet^.sheetLookup    
     flu = Map.fromList $ [(T.unwords [T.take 1 (p ^. firstName), p ^. lastName], (p ^. firstName, p ^. lastName)) | p <- prospects']
@@ -126,18 +126,18 @@ createPreferenceForm sid facs prosps = do
 
 
 preferenceRow :: Int -> Int -> Person -> RowData
-preferenceRow row nCols prosp = undefined --rowData & rdValues .~ (filled ++ rest)
+preferenceRow row nCols prosp = rowData & rdValues .~ (filled ++ rest)
   where
     f = prosp ^. firstName
     l = prosp ^. lastName
     --b = prosp ^. biography
-    --u = fromMaybe "www.google.com" (prosp ^. application)
-    --f' = T.concat ["=HYPERLINK(\"", u, "\", \"", f, "\")"]
-    --l' = T.concat ["=HYPERLINK(\"", u, "\", \"", l, "\")"]
-    --fv = extendedValue & evFormulaValue .~ Just f'    
-    --lv = extendedValue & evFormulaValue .~ Just l'
-    --filled = [cellData & cdUserEnteredValue .~ Just fv & cdNote .~ b, cellData & cdUserEnteredValue .~ Just lv & cdNote .~ b]
-    --rest = replicate (nCols - (length filled)) (cellData & cdNote ?~ "")
+    u = fromMaybe "www.google.com" (prosp ^. application)
+    f' = T.concat ["=HYPERLINK(\"", u, "\", \"", f, "\")"]
+    l' = T.concat ["=HYPERLINK(\"", u, "\", \"", l, "\")"]
+    fv = extendedValue & evFormulaValue .~ Just f'    
+    lv = extendedValue & evFormulaValue .~ Just l'
+    filled = [] -- [cellData & cdUserEnteredValue .~ Just fv & cdNote .~ b, cellData & cdUserEnteredValue .~ Just lv & cdNote .~ b]
+    rest = replicate (nCols - (length filled)) (cellData & cdNote ?~ "")
 
 
 availabilityRow :: Int -> Int -> TimeSpan -> RowData
@@ -284,7 +284,6 @@ addTab sid name nRows nCols index = do
       sp = sheetProperties & sTitle ?~ name & sGridProperties ?~ gp & sIndex ?~ (fromIntegral index)
       asr = asrProperties ?~ sp $ addSheetRequest
   rv' <- try . runResourceT . runGoogle env $ send (spreadsheetsBatchUpdate sid (busrRequests .~ [(reqAddSheet .~ Just asr $ request')] $ batchUpdateSpreadsheetRequest)) :: IO (Either Error BatchUpdateSpreadsheetResponse)
-  --print (rv', asr)
   let Right rv = rv'
   return $ fromJust $ (fromJust $ (fromJust $ (head $ rv ^. busrReplies) ^. rAddSheet) ^. aProperties) ^. sSheetId
 
@@ -302,16 +301,16 @@ rowToPerson cols rd = do
   let cells = rd ^. rdValues  
       cells' = map (\x -> (x ^. cdFormattedValue, x^.cdHyperlink)) cells
       feats = Map.fromList $ zip cols cells'
-      first = (fromJust . fst) $ feats Map.! "First"
-      last = (fromJust .fst) $ feats Map.! "Last"
-      minMtg = (read . unpack) $ fromMaybe "3" (fst $ feats Map.! "Minimum meetings") :: Int
-      maxMtg = (read . unpack) $ fromMaybe "3" (fst $ feats Map.! "Maximum meetings") :: Int
-      maxSz = (read . unpack) $ fromMaybe "2" (fst $ feats Map.! "Maximum size") :: Int
-      reqOnly = (fromMaybe "FALSE" (fst $ feats Map.! "Requested only")) == "TRUE"
-      e = (fst . fromJust) $ "Email" `Map.lookup` feats
-      z = (fst . fromJust) $ "Zoom" `Map.lookup` feats
-      g = (fst . fromJust) $ "Group" `Map.lookup` feats
-      a = (snd . fromMaybe (Nothing, Just "")) $ "App" `Map.lookup` feats
+      first = "a" --(fromJust . fst) $ feats Map.! "First"
+      last = "b" --(fromJust .fst) $ feats Map.! "Last"
+      minMtg = 1 -- (read . unpack) $ fromMaybe "3" (fst $ feats Map.! "Minimum meetings") :: Int
+      maxMtg = 2 -- (read . unpack) $ fromMaybe "3" (fst $ feats Map.! "Maximum meetings") :: Int
+      maxSz = 2 -- (read . unpack) $ fromMaybe "2" (fst $ feats Map.! "Maximum size") :: Int
+      reqOnly = True -- (fromMaybe "FALSE" (fst $ feats Map.! "Requested only")) == "TRUE"
+      e = Just "1" -- (fst . fromJust) $ "Email" `Map.lookup` feats
+      z = Just "2" -- (fst . fromJust) $ "Zoom" `Map.lookup` feats
+      g = Just "3" -- (fst . fromJust) $ "Group" `Map.lookup` feats
+      a = Just "4" -- (snd . fromMaybe (Nothing, Just "")) $ "App" `Map.lookup` feats
   return $ simplePerson first last & email .~ e & zoom .~ z & minMeetings .~ minMtg & maxMeetings .~ maxMtg & requestedOnly .~ reqOnly & maxMeetingSize .~ maxSz & group .~ g & application .~ a
 
 
@@ -324,7 +323,7 @@ rowToSlot rd = do
 
 
 tab :: Text -> Lens' Spreadsheet Sheet
-tab name = lens (\ss -> fromJust $ ssheet ss name) undefined
+tab name = lens (\ss -> fromJust $ ssheet ss (traceShowId name)) undefined
 
 
 ssheet :: Spreadsheet -> Text -> Maybe Sheet
@@ -380,7 +379,7 @@ getIndividualPrefs sn ss = concat (map (rowToIndividualPreferences cols) rows)
 getPeople :: Text -> Spreadsheet -> [Person]
 getPeople sn ss = catMaybes $ map (rowToPerson cols) rows
   where
-    (sheet:_) = [s | s <- ss ^. sprSheets, sheetName s == Just sn]
+    (sheet:_) = [s | s <- ss ^. sprSheets, sheetName s == Just (traceShowId sn)]
     (ds:_) = sheet ^. sData
     cols = rowToStrings $ head $ ds ^. gdRowData
     rows = ds ^. gdRowData . _tail
@@ -450,9 +449,9 @@ fixTime time = TimeSpan s e
 
 
 getAvailability :: Text -> Spreadsheet -> [Person] -> [Person]
-getAvailability tabName ss fac = fac'
+getAvailability tabName ss fac = fac --fac'
   where
-    (_:_:firsts):(_:_:lasts):xs = map rowToStrings $ (head  $ ss ^. tab tabName . sData) ^. gdRowData
+    (_:_:firsts):(_:_:lasts):xs = map rowToStrings $ (head  $ ss ^. tab (traceShowId tabName) . sData) ^. gdRowData
     names = zip firsts lasts
     
     avails = concat $ map (\(s:e:xs') -> [(stringsToSlot s e, n, v) | (n, v) <- zip names xs', v /= ""]) (init xs)

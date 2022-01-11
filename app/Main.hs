@@ -19,14 +19,19 @@ import System.IO (stdout)
 import Data.Maybe (fromMaybe, catMaybes, fromJust)
 import Text.Printf (printf)
 import Control.Monad
-import Control.Schedule
+import Control.Scheduling
 import Data.Time
 import Data.Time.Format
 import Control.Lens hiding (Wrapped, Unwrapped)
 import qualified Data.ByteString.Lazy as BS
 import Debug.Trace (traceShowId)
 --import Control.Monad.Log
+import qualified Network.Google.Sheets as S
+import Network.Google.Resource.Sheets.Spreadsheets.Get
+import Network.Google.Sheets hiding (Text, sheet)
 
+sheetName :: Sheet -> Maybe Text
+sheetName s = join $ s ^. sProperties <&> view sTitle
 
 events = [ ("Welcome", ("Mon 08:00", "Mon 09:00"))
          , ("Shared lunch", ("Wed 12:00", "Wed 13:00"))
@@ -57,10 +62,10 @@ deriving instance Show (Args Unwrapped)
 
 generateSlots gran wins = do
   let dates = ["2021-03-" ++ (show d) | d <- [8,9,10,11,12]]
-  toDrop <- sequence $ [ stringsToSlots "2021-03-08" "2021-03-08" "17:00" "17:00" gran
-                       , stringsToSlots "2021-03-10" "2021-03-10" "17:00" "19:00" gran
-                       , stringsToSlots "2021-03-12" "2021-03-12" "17:00" "19:00" gran
-                       ]
+  toDrop <- sequence $ [] -- stringsToSlots "2021-03-08" "2021-03-08" "17:00" "17:00" gran
+                       --, stringsToSlots "2021-03-10" "2021-03-10" "17:00" "19:00" gran
+                       --, stringsToSlots "2021-03-12" "2021-03-12" "17:00" "19:00" gran
+                       --]
   slots <- sequence $ [stringsToSlots d d "08:00" "19:00" gran | d <- dates]
   let toDrop' = concat toDrop
       slots' = [s | s <- concat slots, not $ s `elem` toDrop']
@@ -82,7 +87,6 @@ getCurrentCount' state = fac --Map.fromListWith (+) (pro ++ base)
     --mts = concat $ map (Map.toList . snd) fac
     --pro = map ((,1) . fst) mts
 
--- Smolensky+Merrill, Wed. @ 2
 
 main :: IO ()
 main = do
@@ -118,8 +122,8 @@ main = do
                  then writeSchedule sid (slu Map.!? "Interviewer Schedule") (slu Map.!? "Prospect Schedule") state'' (fromJust $ generateSlots 60 [])
                  else putStrLn "Refusing to overwrite existing schedule (you may specify '--force' if you're sure)"
 
-               print $ getCurrentCount state''
-               print $ map (\(x, y) -> (x, length y)) (getCurrentCount' state'')
+               --print $ getCurrentCount state''
+               --print $ map (\(x, y) -> (x, length y)) (getCurrentCount' state'')
                --putStrLn $ unlines $ map (show . 
                return ()
              Emails{..} -> do

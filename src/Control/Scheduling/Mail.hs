@@ -7,13 +7,13 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Control.Schedule.Mail (generateEmails) where
+module Control.Scheduling.Mail (generateEmails) where
 
 import Prelude hiding (group)
 import Text.Printf (printf, PrintfArg(..), fmtPrecision, fmtChar, errorBadFormat, formatString, vFmt, IsChar)
 import Control.Lens ((^.), (.~), (<&>), set, view, makeLenses, makeFields)
-import Control.Schedule.State
-import Control.Schedule.Person
+import Control.Scheduling.State
+import Control.Scheduling.Person
 import Data.Text (Text)
 import qualified Data.Text as Text
 import qualified Data.Text.Lazy as LText
@@ -25,7 +25,7 @@ import Control.Lens hiding (zoom)
 import Data.ByteString.Lazy (ByteString)
 import Debug.Trace (traceShowId)
 import Network.Mail.Mime
-import Control.Schedule.TimeSpan
+import Control.Scheduling.TimeSpan
 import Data.Time.Clock
 import Data.Time.Format
 import Data.List (sortOn, sort)

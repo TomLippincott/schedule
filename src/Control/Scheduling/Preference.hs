@@ -7,11 +7,11 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Control.Schedule.Preference (Preference(..), interviewerParticipants, intervieweeParticipants, minutes, priority, simplePreference, required) where
+module Control.Scheduling.Preference (Preference(..), interviewerParticipants, intervieweeParticipants, minutes, priority, simplePreference, required) where
 
 import Text.Printf (printf, PrintfArg(..), fmtPrecision, fmtChar, errorBadFormat, formatString, vFmt, IsChar)
 import Control.Lens ((^.), (.~), (<&>), set, view, makeLenses, makeFields)
---import Control.Schedule.TimeSpan (TimeSpan(..))
+--import Control.Scheduling.TimeSpan (TimeSpan(..))
 import Data.Text (Text)
 import Data.Map (Map)
 import qualified Data.Map as Map

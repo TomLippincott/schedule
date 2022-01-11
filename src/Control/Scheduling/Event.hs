@@ -7,17 +7,15 @@
 {-# LANGUAGE ExplicitNamespaces #-}
 {-# LANGUAGE TemplateHaskell #-}
 
-module Control.Schedule.Location (Location(..)) where
+module Control.Scheduling.Event (Event(..)) where
 
 import Text.Printf (printf, PrintfArg(..), fmtPrecision, fmtChar, errorBadFormat, formatString, vFmt, IsChar)
 import Control.Lens ((^.), (.~), (<&>), set, view, makeLenses, makeFields)
 import Data.Text (Text)
 import Data.Map (Map)
 
-data Location = Location { _building :: String
-                         , _room :: String
-                         , _availability :: Maybe [Int] --[TimeSpan]
-                         , _capacity :: Maybe Int
-                         }
+data Event = Event { _title :: String
+                   , _description :: String
+                   }
 
-makeFields ''Location
+makeLenses ''Event
